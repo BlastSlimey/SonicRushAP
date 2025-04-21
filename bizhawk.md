@@ -1,24 +1,23 @@
 # items
-022c475e last received item index, as halfword int
-022c4760 zone unlocks sonic, as bits
-022c4761 zone unlocks blaze, as bits
-022c4762 progressive level unlocks sonic, as byte int
-022c4763 progressive level unlocks blaze, as byte int
-022C468F chaos emeralds, as bits
-022c4765 sol emeralds, as bits
-022c4767 Sidekick showing, as bits (first Tails, then Cream)
-bad power-ups TODO
-boost fills and drains TODO
-add sonic extra lives to 022C468E
-add blaze extra lives to 022C46E6
+- 022c475e last received item index, as halfword int
+- 022c4760 zone unlocks sonic, as bits
+- 022c4761 zone unlocks blaze, as bits
+- 022c4762 progressive level unlocks sonic, as byte int
+- 022c4763 progressive level unlocks blaze, as byte int
+- 022C468F chaos emeralds, as bits
+- 022c4765 sol emeralds, as bits
+- 022c4767 Sidekick showing, as bits (first Tails, then Cream)
+- bad power-ups TODO
+- boost fills and drains TODO
+- add sonic extra lives to 022C468E
+- add blaze extra lives to 022C46E6
 
 # locations
-act clear
-=> 022c4690 sonic level scores, 4 bytes each for act 1 2 and boss, all zones in order
-=> 022c46e8 blaze level scores, 4 bytes each for act 1 2 and boss, all zones in order
-s rank same as act clear, but only if big number
-special stages 022c4764 bits
-f-zone, point w, extra zone cleared flags at 022c4766 (in that order)
+- 022c4690 sonic level scores, 4 bytes each for act 1 2 and boss, all zones in order
+- 022c46e8 blaze level scores, 4 bytes each for act 1 2 and boss, all zones in order
+- s rank same as act clear, but only if big number
+- special stages 022c4764 bits
+- f-zone, point w, extra zone cleared flags at 022c4766 (in that order)
 
 # other
-022c476f Save data initialization flag for client, has to stay 0 => 0 is initialized and can check for flags
+- 022c476f Save data initialization flag for client, has to stay 0 => 0 is initialized and can check for flags

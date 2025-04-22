@@ -9,6 +9,7 @@ Documentation and releases of the Archipelago patch file for Sonic Rush
 - Freeze after Sonic zone 5 boss (Discord@gurglemurgle)
   - zone started with act 1 and did **not** collect any progressive level select for sonic
 - Investigate early no-items phenomenon 
+- Typos in boss locations in client
 
 ### Gameplay
 - Bad power-ups from battle play

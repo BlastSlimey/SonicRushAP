@@ -26,6 +26,20 @@
 - 022c46e8 blaze level scores, 4 bytes each for act 1 2 and boss, all zones in order
 
 # code changes
+
+### sol emeralds display
+- on updating visual data depending on char, including shown life count and
+- function address: 0204ec40, ARM instructions, located in arm9
+- => replace visual sol emeralds calculation with loading AP items
+- => replace at address 0204ecb8
+```
+ldr r4,[DAT_AP_PTR]
+ldrb lr,[r4,#0x5]
+strh lr,[r0,#0x28]
+b LAB_0204ecec
+=> DAT_AP_PTR 022c4760
+```
+
 ### show sidekick
 - on deciding whether to show the sidekick
 - => change to account for ap items/flags
@@ -121,9 +135,9 @@ and r1,r0
 cmp r1,#0x0
 beq LAB_FALSE
 mov r0,#0x1
-bx lr
+b LAB_INSERT_END
 mov r0,#0x0 # LAB_FALSE
-bx lr
+b LAB_INSERT_END
 DAT_SAV 022C4680
 push {r2} # LAB_INSERT
 ldr r0,[DAT_SAV_BLAZE]
@@ -145,6 +159,13 @@ b LAB_INSERT_BACK
 DAT_SAV_BLAZE 022C46E4
 DAT_SAV_SONIC 022C4680
 DAT_AP_STORAGE 022c475e
+push {r0} # LAB_INSERT_END
+ldr r1,[DAT_AP_PTR]
+mov r0,#0x6b
+strb r0 [r1,#0xf]
+pop {r0}
+bx lr
+=> DAT_AP_PTR 022c4760
 ```
 
 ### Prevent arm9 from clearing custom code
@@ -202,7 +223,7 @@ FUN_ALW_CHAR_SEL()
 ```
 
 ### Setup overworld
-- DONE
+- REMOVED, AS IT SOMEHOW CAUSED FREEZES
 - on selecting character, setting some visual data
 - also on returning from in-level to overworld
 - ergo on loading overworld
@@ -211,9 +232,9 @@ FUN_ALW_CHAR_SEL()
 - => add to the beginning
 ```
 --- function 02063f50 in arm9:
-  022C468C = 0x1a
-  022C46E4 = 0x1c
-  022c4688 = 022c4688 | 0x1000 <- DEPRECATED, CAN BE REMOVED FROM PATCH
+  022C468C = 0x1a <- REMOVED
+  022C46E4 = 0x1c <- REMOVED
+  022c4688 = 022c4688 | 0x1000 <- REMOVED
   if (022c4560 == 1)
     022c4588 = 022c4765
 ```

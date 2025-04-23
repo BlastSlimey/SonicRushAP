@@ -187,6 +187,8 @@ d2000000 00000000
 5207b8a4 ffffffff
 022c4580 00000020
 d2000000 00000000
+	one hit bosses
+22369AC8 00000001
 
 action replay/codebreaker/game genie:
 02xxxxxx xxxxxxxx write 4 bytes
@@ -197,6 +199,8 @@ D4xxxxxx 0141xxxx continue if less (signed)
 62xxxxxx xxxxxxxx continue if not equal
 52xxxxxx xxxxxxxx continue if equal
 D2000000 00000000 end any repeats and conditions, set offset and storage registers to zero
+------------------------
+=> https://nintendq.forumotion.com/t45-action-replay-code-types
 
 
 

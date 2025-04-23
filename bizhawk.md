@@ -20,4 +20,4 @@
 - f-zone, point w, extra zone cleared flags at 022c4766 (in that order)
 
 # other
-- 022c476f Save data initialization flag for client, has to stay 0 => 0 is initialized and can check for flags
+- 022c476f Save data initialization flag for client, has to stay 0x6b => 0x6b gets set when save data setup is done

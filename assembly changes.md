@@ -32,6 +32,7 @@
 - function address: 0204ec40, ARM instructions, located in arm9
 - => replace visual sol emeralds calculation with loading AP items
 - => replace at address 0204ecb8
+- => r0-r4, r12, lr available
 ```
 ldr r4,[DAT_AP_PTR]
 ldrb lr,[r4,#0x5]
@@ -96,13 +97,14 @@ bx         lr
 func_0x02059bdc(0x1a); -> FUN_BOSS_CLEARED(0)
 func_0x02059bcc(0x1c); -> FUN_BOSS_CLEARED(1)
 func_0x02059b2c(); -> FUN_BOSS_CLEARED(2)
---- new function FUN_BOSS_CLEARED(r4) at 0231f164 in THUMB:
+--- new function FUN_BOSS_CLEARED(r4) at 02085000 in arm9 in THUMB:
 ldr r0,[DAT_BOSS_FLAGS]
 mov r1,#0x1
 lsl r1,r4
 ldrb r4,[r0,#0x0]
 orr r4,r1
 strb r4,[r0,#0x0]
+bx lr
 DAT_BOSS_FLAGS 022c4766
 ```
 
@@ -117,7 +119,7 @@ DAT_BOSS_FLAGS 022c4766
 push {lr}
 bl FUN_SAVE_SETUP
 pop {pc}
---- FUN_SAVE_SETUP at 0231f100 in THUMB
+--- FUN_SAVE_SETUP at 020850b0 in THUMB in arm9
 => only r0 and r1 available
 b LAB_INSERT
 ldr r0,[DAT_SAV] # LAB_INSERT_BACK
@@ -162,7 +164,7 @@ DAT_AP_STORAGE 022c475e
 push {r0} # LAB_INSERT_END
 ldr r1,[DAT_AP_PTR]
 mov r0,#0x6b
-strb r0 [r1,#0xf]
+strb r0,[r1,#0xf]
 pop {r0}
 bx lr
 => DAT_AP_PTR 022c4760
@@ -217,29 +219,12 @@ return 0
 *DAT_022d6f34 = 0;
 --- replace
 FUN_ALW_CHAR_SEL()
---- new function FUN_ALW_CHAR_SEL at 02315f04
+--- new function FUN_ALW_CHAR_SEL at 02085018 in arm9 in THUMB
 022C468C = 0x1a
 022C4560 = 0;
 ```
 
-### Setup overworld
-- REMOVED, AS IT SOMEHOW CAUSED FREEZES
-- on selecting character, setting some visual data
-- also on returning from in-level to overworld
-- ergo on loading overworld
-- => set both storyprog to last and extra zone cleared
-- => set correct display of sol emeralds if blaze selected
-- => add to the beginning
-```
---- function 02063f50 in arm9:
-  022C468C = 0x1a <- REMOVED
-  022C46E4 = 0x1c <- REMOVED
-  022c4688 = 022c4688 | 0x1000 <- REMOVED
-  if (022c4560 == 1)
-    022c4588 = 022c4765
-```
-
-### Change zone entering
+### Entering zone
 - DONE
 - on selecting zone, deciding what to do based on selected character, selected zone, and what zones have level select unlocked
 - iVar3 holds the selected zone as an index (0...7)
@@ -251,7 +236,7 @@ FUN_ALW_CHAR_SEL()
   ...
   if (-1 < iVar3) {
 --- override
-=> r0 free, r1 iVar3, r2 piVar2 but can be exchanged for value and then freed, r3 free but return pointer
+=> r0 free, r1 iVar3 sel zone (NOT LOCATION), r2 piVar2 (SEL CHAR PTR???) but can be exchanged for value and then freed, r3 free but return pointer
     ap_pointer = 022c4760
     if *piVar2 == 1
       ap_pointer++
@@ -261,7 +246,7 @@ FUN_ALW_CHAR_SEL()
       goto act_1
     goto ret
 level_select:
-    set storyprogs to 1...*(ap_pointer+2) full
+    FUN_SET_STORYPROG_X_FULL(ap_pointer+2)
     FUN_022e5b6c();
     func_0x02052104(0xd);
     goto ret
@@ -275,7 +260,8 @@ ret:
 --- remain
   }
   ...
---- new function set storyprogs to 1...x full in overlay0001 at 0231f0b0:
+--- new function FUN_SET_STORYPROG_X_FULL(x) in arm9 at 02085140 in THUMB:
+=> r0 free, r1 selected zone, r2 = prog lvl sel, r3 ptr to unlocked zones bits
 switch x
   case 1: 022C468C = 0x1, 022C46E4 = 0x2, return
   case 2: 022C468C = 0x4, 022C46E4 = 0x6, return
@@ -284,6 +270,40 @@ switch x
   case 5: 022C468C = 0x10, 022C46E4 = 0x11, return
   case 6: 022C468C = 0x14, 022C46E4 = 0x15, return
   default: 022C468C = 0x17, 022C46E4 = 0x19, return
+--- and now in assembly
+mov	r0,#0x1
+mov	r1,#0x2
+cmp	r2,#0x1
+beq	LAB_STORE_PROG
+mov	r0,#0x4
+mov	r1,#0x6
+cmp	r2,#0x2
+beq	LAB_STORE_PROG
+mov	r0,#0x8
+mov	r1,#0x9
+cmp	r2,#0x3
+beq	LAB_STORE_PROG
+mov	r0,#0xc
+mov	r1,#0xd
+cmp	r2,#0x4
+beq	LAB_STORE_PROG
+mov	r0,#0x10
+mov	r1,#0x11
+cmp	r2,#0x5
+beq	LAB_STORE_PROG
+mov	r0,#0x14
+mov	r1,#0x15
+cmp	r2,#0x6
+beq	LAB_STORE_PROG
+mov	r0,#0x17
+mov	r1,#0x19
+ldr	r3,[DAT_SONIC_PROG] # LAB_STORE_PROG
+strb	r0,[r3,#0x0]
+ldr	r3,[DAT_BLAZE_PROG]
+strb	r1,[r3,#0x0]
+bx	lr
+DAT_BLAZE_PROG	022C46E4
+DAT_SONIC_PROG	022C468C
 ```
 
 ### Redirect extra zone flag setting

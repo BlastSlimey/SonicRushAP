@@ -6,6 +6,7 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
 - Tails and Cream showing up in boss fights and talking even when not present
 - Generation failures on low starting zone amount
 - Corruption going down after returning to overworld
+- Early save setup suddenly not working
 
 ### APWorld
 - Changing item and location names

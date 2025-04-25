@@ -64,11 +64,18 @@ if sidekick showing & (1 << selected char) == 0
 ```
 --- function 0204e744 in arm9 in ARM:
 => use r0,r1,r2 = current zone,r3 = current act,r12 = progressive level select
+=> all transitioning returns afterwards
+calculate current zone from current act
 if current act > 2
   nothing?
 else if current act == 2
   set storyprog to full
-  back to overworld from boss # needs FUN_0205500c
+  if current zone == 7
+    f zone cutscene # FUN_0204d684(0x02054f10,3);
+  else if zone == 8
+    extra zone cutscene # FUN_02054ef4();
+  else
+    back to overworld from boss # needs FUN_0205500c
 if current zone < progressive lvl sel (sonic/blaze)
   set storyprog to full
   back to overworld from act # needs FUN_02054ff0
@@ -97,7 +104,7 @@ bx         lr
 func_0x02059bdc(0x1a); -> FUN_BOSS_CLEARED(0)
 func_0x02059bcc(0x1c); -> FUN_BOSS_CLEARED(1)
 func_0x02059b2c(); -> FUN_BOSS_CLEARED(2)
---- new function FUN_BOSS_CLEARED(r4) at 02085000 in arm9 in THUMB:
+--- new function FUN_BOSS_CLEARED(r4) at 02085610 in arm9 in THUMB:
 ldr r0,[DAT_BOSS_FLAGS]
 mov r1,#0x1
 lsl r1,r4
@@ -119,7 +126,7 @@ DAT_BOSS_FLAGS 022c4766
 push {lr}
 bl FUN_SAVE_SETUP
 pop {pc}
---- FUN_SAVE_SETUP at 020850b0 in THUMB in arm9
+--- FUN_SAVE_SETUP at 020856c0 in THUMB in arm9
 => only r0 and r1 available
 b LAB_INSERT
 ldr r0,[DAT_SAV] # LAB_INSERT_BACK
@@ -181,14 +188,14 @@ for...
 --- replace
 FUN_WHITEOUT()
 r0 = 0
---- new function FUN_WHITEOUT at 02085060, ARM instructions
+--- new function FUN_WHITEOUT at 02085670, ARM instructions
 r1 = 0x0207cfe0
-r2 = 0x02085000
+r2 = 0x02085600
 r0 = 0
 compare r1,r2
 strcc r0,[r1],#0x4
 bcc 2 instructions back
-r1 = 0x02085500
+r1 = 0x02085d00
 r2 = 0x022c5c80
 compare r1,r2
 strcc r0,[r1],#0x4
@@ -209,7 +216,7 @@ return 0
 ```
 
 ### Always enable character select
-- DEPRECATED, CAN BE REMOVED FROM PATCH
+- REMOVED FROM PATCH, WAS DEPRECATED
 - on entering char select, before reading sonic's storyprog
 - => set sonic storyprog to 0x1a, always giving char select
 - => needs to be it's own function
@@ -260,7 +267,7 @@ ret:
 --- remain
   }
   ...
---- new function FUN_SET_STORYPROG_X_FULL(x) in arm9 at 02085140 in THUMB:
+--- new function FUN_SET_STORYPROG_X_FULL(x) in arm9 at 02085750 in THUMB:
 => r0 free, r1 selected zone, r2 = prog lvl sel, r3 ptr to unlocked zones bits
 switch x
   case 1: 022C468C = 0x1, 022C46E4 = 0x2, return

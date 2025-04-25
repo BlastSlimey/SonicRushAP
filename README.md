@@ -9,6 +9,7 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
 
 ### APWorld
 - Changing item and location names
+- Merge zone unlocks and progressive level selects to not differentiate between characters
 
 ### Gameplay
 - In-level effect items

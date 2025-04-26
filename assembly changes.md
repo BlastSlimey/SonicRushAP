@@ -9,7 +9,7 @@
 - 022c4765 sol emeralds, as bits
 - 022c4766 f-zone, point w, extra zone cleared flag, as bits (in that order)
 - 022c4767 Sidekick showing, as bits (first Tails, then Cream)
-- 022c476f Save data initialization flag for client, has to stay 0
+- 022c476f Save data initialization flag for client, has to stay 0x6b
 
 # vanilla addresses of data, for reference
 - 022c4560 selected character, 1 is blaze, 0 is sonic
@@ -26,6 +26,25 @@
 - 022c46e8 blaze level scores, 4 bytes each for act 1 2 and boss, all zones in order
 
 # code changes
+
+### ap storage protection
+- function at 02058474 in arm9 in ARM
+- validates and corrects save data (storyprog, extra lives, chaos emeralds, scores, 0xFF part and after?)
+- caps 0xFF part at 0x8CA0 (36000) if not 0xFFFF
+- => skip loop that would cap ap storage
+```
+r0 set to 0x0000FFFF, then used, afterwards set => no problem
+r1 set to r12, then used, afterwards set => no problem
+r2 set to 0x8CA0, then used, afterwards set => no problem
+r3 repeatedly set to *[r6,r5], then used, afterwards set => no problem
+r4 conditionally and repeatedly set to r1 = r12 = 0x0, afterwards the same => no problem from context (return value, only gets set to 0 conditionally)
+r5 repeatedly set to r12 << 1, then used, afterwards set => no problem
+r6 set to r7 + 0x16, then used, afterwards set => no problem
+r7 set to 0x022c473c, then used, afterwards used => need to keep set instruction
+r12 set to 0, then used and incremented, afterwards set => no problem
+--- override at 02058570
+b 0x020585ac
+```
 
 ### sol emeralds display
 - on updating visual data depending on char, including shown life count and
@@ -116,17 +135,26 @@ DAT_BOSS_FLAGS 022c4766
 ```
 
 ### early save data setup
-- DONE
-- on entering main menu, checking if time trials have been notified
+- on entering main menu, checking if time attack has been notified to the player
+- function 022d8e58 in overlay0001 in THUMB
 - => save data setup
+- => replace original function with call to new function, returning what the original function intended
+- => new FUN_SAVE_SETUP at 020856c0 in arm9 in THUMB
 ```
---- function 022d8e58 in overlay0001:
---- delete everything
---- replace
+--- old function
 push {lr}
 bl FUN_SAVE_SETUP
 pop {pc}
---- FUN_SAVE_SETUP at 020856c0 in THUMB in arm9
+--- new function
+blaze_storyprog = 0x1c            # full overworld for blaze
+if sonic_storyprog == 0           # save data not set up yet, this value never gets set to 0 again
+  for ptr = 0x022c475e; ptr < 0x022c4770; ptr++
+    *ptr = 0                      # set ap storage to 0
+sonic_storyprog = 0x1a            # full overworld for sonic
+overall_storyprog |= 0x1000       # check extra zone flag for corruption-less overworld
+*022c4770 = 0x6b                  # notify the client that save datat was set up
+return overall_storyprog & 0x100  # returns whether time attack has been notified to the player
+--- assembly
 => only r0 and r1 available
 b LAB_INSERT
 ldr r0,[DAT_SAV] # LAB_INSERT_BACK
@@ -166,7 +194,7 @@ cmp r0,r2
 bne LAB_FOR_LOOP
 b LAB_INSERT_BACK
 DAT_SAV_BLAZE 022C46E4
-DAT_SAV_SONIC 022C4680
+DAT_CHAR_SEL 022C468c
 DAT_AP_STORAGE 022c475e
 push {r0} # LAB_INSERT_END
 ldr r1,[DAT_AP_PTR]

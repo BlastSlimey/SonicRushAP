@@ -9,7 +9,7 @@
 - 022c4765 sol emeralds, as bits
 - 022c4766 f-zone, point w, extra zone cleared flag, as bits (in that order)
 - 022c4767 Sidekick showing, as bits (first Tails, then Cream)
-- 022c476f Save data initialization flag for client, has to stay 0x6b
+- ~~022c476f Save data initialization flag for client, has to stay 0x6b~~ DEPRECATED, REPLACED BY SONIC STORYPROG
 
 # vanilla addresses of data, for reference
 - 022c4560 selected character, 1 is blaze, 0 is sonic
@@ -18,7 +18,7 @@
 - 022c4588 visual emeralds buffer
 - 022c4688 overall story progression
 - 022c4689 5th bit = 1 is extra zone cleared ergo corruption free overworld
-- 022C468C sonic story progression (NEVER SET TO 0)
+- 022C468C sonic story progression (NEVER SET TO 0, ANYTHING ABOVE 0 SIGNALS THE SAVE FILE BEING READY TO RECEIVE ITEMS)
 - 022C46E4 blaze story progression
 - add sonic extra lives to 022C468E
 - add blaze extra lives to 022C46E6

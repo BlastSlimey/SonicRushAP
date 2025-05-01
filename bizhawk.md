@@ -9,8 +9,11 @@
 - 022c4767 Sidekick showing, as bits (first Tails, then Cream)
 - bad power-ups TODO
 - boost fills and drains TODO
-- add sonic extra lives to 022C468E
-- add blaze extra lives to 022C46E6
+- extra lives
+  - 022C468E sonic extra lives, not in-level with Sonic
+  - 022C46E6 blaze extra lives, not in_level with Blaze
+  - 022c45a4 in-level with according character
+- 022c4580 current in-level time
 
 # locations
 - 022c4690 sonic level scores, 4 bytes each for act 1 2 and boss, all zones in order
@@ -21,3 +24,6 @@
 
 # other
 - ~~022c476f Save data initialization flag for client, has to stay 0x6b => 0x6b gets set when save data setup is done~~ DEPRECATED, REPLACED BY SONIC STORYPROG BEING != 0x0
+- 022c4768 Deathlink, as bits (first receiving, then sending)
+- 022c45b4 might help with determining if in-level (3), transitioning scene (0), or anywhere else (1)
+- 022c4560 selected character, Sonic is 0, Blaze is 1

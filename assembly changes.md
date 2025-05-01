@@ -9,6 +9,7 @@
 - 022c4765 sol emeralds, as bits
 - 022c4766 f-zone, point w, extra zone cleared flag, as bits (in that order)
 - 022c4767 Sidekick showing, as bits (first Tails, then Cream)
+- 022c4768 Deathlink, as bits (first receiving, then sending)
 - ~~022c476f Save data initialization flag for client, has to stay 0x6b~~ DEPRECATED, REPLACED BY SONIC STORYPROG
 
 # vanilla addresses of data, for reference
@@ -26,6 +27,64 @@
 - 022c46e8 blaze level scores, 4 bytes each for act 1 2 and boss, all zones in order
 
 # code changes
+
+### receiving and sending deathlink
+- function at 0234419c in overlay0000 in ARM
+  - repeats continuously in-level
+  - checks and executes death if damaged and no rings
+  - => also execute death if deathlink received
+  - => new function FUN_RECEIVE_DEATHLINK at 020857a0 in arm9 in ARM
+```
+--- override at 02344878, pretty much just adds another function call
+mov r0,r4
+blgt FUN_RECEIVE_DEATHLINK
+blle FUN_02349038
+--- FUN_RECEIVE_DEATHLINK(param1)
+if 022c4768 & 1 != 0 # if receive flag set
+  FUN_02349038(param1) # function that kills player
+  022c4768 &= 0xfe # unsetting receive flag
+--- and now in assembly
+stmdb sp!,{lr}
+ldr r1,[PTR_DEATHLINK]
+ldrb r1,[r1,#0x0]
+and r1,r1,#0x1
+cmp r1,#0x0
+beq LAB_RET_FUN_DEATHLINK
+bl FUN_02349038
+ldr r1,[PTR_DEATHLINK]
+ldrb lr,[r1,#0x0]
+and lr,lr,#0xfe
+strb lr,[r1,#0x0]
+	LAB_RET_FUN_DEATHLINK
+ldmia sp!,{lr}
+bx lr
+```
+- function at 02349038 in overlay0000 in ARM
+  - called when hitting damaging object without rings
+  - calls a function which calls another function that conditionally subtracts one from the extra lives buffer
+  - => set sending deathlink flag if receiving flag not set (because this death might be caused by an incoming deathlink)
+  - => new function FUN_SEND_DEATHLINK at 020857dc in arm9 in ARM
+```
+--- override at 023490dc, original function call must happen instantly
+bl FUN_SEND_DEATHLINK
+--- FUN_SEND_DEATHLINK(param1, param2)
+FUN_02346aa8(param1, param2)
+if 022c4768 & 1 == 0
+  022c4768 |= 2
+--- and now in assembly
+stmdb sp!,{lr}
+bl FUN_02346aa8
+ldr r0,[PTR_DEATHLINK]
+ldrb r1,[r0,#0x0]
+and r1,r1,#0x1
+cmp r1,#0x0
+ldrbeq r1,[r0,#0x0]
+orreq r1,r1,#0x2
+strbeq r1,[r0,#0x0]
+ldmia sp!,{lr}
+bx lr
+	PTR_DEATHLINK 0x022c4768
+```
 
 ### ap storage protection
 - function at 02058474 in arm9 in ARM

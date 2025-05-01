@@ -19,7 +19,6 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
   - +/- x Rings
   - Squeezing/Restoring Boss Health
   - Boost Fills/Drains
-- Deathlink
 - Sonic vs. Blaze duration multiplier
 - Enemy shuffling
 - Item box randomization

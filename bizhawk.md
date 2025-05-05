@@ -6,6 +6,7 @@
 - 022c4763 progressive level unlocks blaze, as byte int
 - 022C468F chaos emeralds, as bits
 - 022c4765 sol emeralds, as bits
+- 022c4588 emeralds buffer
 - 022c4767 Sidekick showing, as bits (first Tails, then Cream)
 - bad power-ups TODO
 - boost fills and drains TODO

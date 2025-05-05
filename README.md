@@ -7,7 +7,7 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
 - Generation failures on low starting zone amount
 - Corruption going down after returning to overworld
 - Disable time attack
-- Fix receiving chaos emeralds in-level
+- More visual bugs with emeralds
 
 ### APWorld
 - Add location groups

@@ -34,14 +34,15 @@
   - checks and executes death if damaged and no rings
   - => also execute death if deathlink received
   - => new function FUN_RECEIVE_DEATHLINK at 020857a0 in arm9 in ARM
+  - => has to use r4 as param
 ```
 --- override at 02344878, pretty much just adds another function call
 mov r0,r4
-blgt FUN_RECEIVE_DEATHLINK
 blle FUN_02349038
---- FUN_RECEIVE_DEATHLINK(param1)
+bl FUN_RECEIVE_DEATHLINK
+--- FUN_RECEIVE_DEATHLINK(param1, param2, param3, param4, param5)
 if 022c4768 & 1 != 0 # if receive flag set
-  FUN_02349038(param1) # function that kills player
+  FUN_02349038(param5) # function that kills player
   022c4768 &= 0xfe # unsetting receive flag
 --- and now in assembly
 stmdb sp!,{lr}
@@ -50,6 +51,7 @@ ldrb r1,[r1,#0x0]
 and r1,r1,#0x1
 cmp r1,#0x0
 beq LAB_RET_FUN_DEATHLINK
+mov r0,r4
 bl FUN_02349038
 ldr r1,[PTR_DEATHLINK]
 ldrb lr,[r1,#0x0]

@@ -12,6 +12,7 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
 
 ### APWorld
 - Add location groups
+- Improve deathlink cause
 
 ### Gameplay
 - In-level effect items

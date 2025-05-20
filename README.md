@@ -16,8 +16,7 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
 - Add location groups
 - Improve deathlink cause
 - Rework logic to use regions for level 
-- option to exclude special stages 
-- use datapackage in client instead of apworld dicts 
+- option to exclude special stages  
 
 ### Gameplay
 - In-level effect items

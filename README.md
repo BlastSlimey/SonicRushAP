@@ -10,7 +10,8 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
 - Tails suddenly not visible???
 - DeathLink triggering in demo
 - wrong chaos emerald
-- sol emeralds collected without receiving 
+- sol emeralds collected without receiving
+- save data not initialized before checking locations
 
 ### APWorld
 - Add location groups

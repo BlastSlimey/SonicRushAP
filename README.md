@@ -12,6 +12,7 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
 - wrong chaos emerald
 - sol emeralds collected without receiving
 - save data not initialized before checking locations
+- demo leading to even more problems
 
 ### APWorld
 - Add location groups

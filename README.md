@@ -13,6 +13,7 @@ Documentation and releases of the Archipelago patch file and apworld for Sonic R
 - sol emeralds collected without receiving
 - save data not initialized before checking locations
 - demo leading to even more problems
+- report: having f-zone and completing 2 later zones will unlock the rest?
 
 ### APWorld
 - Add location groups
